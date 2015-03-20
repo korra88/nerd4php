@@ -1,11 +1,13 @@
 <?php
 
+namespace NERD;
+
 /**
  * Interface for APIs at http://nerd.eurecom.fr
  *
  * @author emanuele
  */
-class NERD {
+class client {
 
     protected $api_key;
 
@@ -31,9 +33,9 @@ class NERD {
 
     /**
      * Create a document with given text.
-     * Returns documents id.
-     * @param type $text
-     * @return mixed    integer if document gets created, false otherwise
+     * Returns created document's ID or false on failure.
+     * @param string $text
+     * @return mixed    int if document gets created, false otherwise
      */
     public function createDocumentFromString($text) {
         if (strlen($text) == 0) {
@@ -57,9 +59,10 @@ class NERD {
     }
 
     /**
-     *
-     * @param type $uri
-     * @return boolean
+     * Create a document from given URI.
+     * Returns documents ID or false.
+     * @param string $uri
+     * @return mixed        int on success, false otherwise
      */
     public function createDocumentFromUri($uri) {
         if (filter_var($uri, FILTER_VALIDATE_URL) !== $uri) {
@@ -82,12 +85,33 @@ class NERD {
         }
     }
 
-    protected function api_request($method, $url, $data) {
+    public function getDocumentData($idDocument) {
+        if (!is_numeric($idDocument)) {
+            return false;
+        } else {
+            $json_encoded = $this->api_request('GET', static::DOCUMENT_GET . '/' . $idDocument);
+            $json = json_decode($json_encoded, true);
+            $document = new \NERD\schema\Document();
+            foreach($json as $docProp => $value) {
+                $document->$docProp = $value;
+            }
+            return $document;
+        }
+    }
+
+    /**
+     * Wrapper for CURL requests
+     * @param type $method
+     * @param type $url
+     * @param type $data
+     * @return boolean
+     */
+    protected function api_request($method, $url, $data = array()) {
         $http_code = 0;
         switch ($method) {
             case 'GET':
             case 'get':
-                $response = $this->curl_get($url . '?' . http_build_query($data), $http_code);
+                $response = $this->curl_get($url . (!empty($data) ? '?' . http_build_query($data) : ''), $http_code);
                 break;
             case 'POST':
             case 'post':
