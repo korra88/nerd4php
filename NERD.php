@@ -85,7 +85,7 @@ class client {
         }
     }
 
-    public function getDocumentData($idDocument) {
+    public function getDocument($idDocument) {
         if (!is_numeric($idDocument)) {
             return false;
         } else {
