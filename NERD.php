@@ -97,7 +97,7 @@ class client {
             $json_encoded = $this->api_request('GET', static::DOCUMENT_GET . '/' . $idDocument);
             $json = json_decode($json_encoded, true);
             $document = new \NERD\schema\Document();
-            foreach($json as $docProp => $value) {
+            foreach ($json as $docProp => $value) {
                 $document->$docProp = $value;
             }
             return $document;
@@ -125,7 +125,8 @@ class client {
             default:
                 return false;
         }
-        if ($http_code !== 200) {
+        $valid_http_codes = array(200, 201);
+        if (!in_array($http_code, $valid_http_codes)) {
             // Error
             ob_start();
             echo "\n[" . date('Y-m-d H:i:s') . "] Error while using NERD APIs:\n" . $method . ' ' . $url . "\nParam:\n";
