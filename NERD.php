@@ -85,6 +85,11 @@ class client {
         }
     }
 
+    /**
+     * Retrieve a document data, given it's ID.
+     * @param integer $idDocument               Valid document ID
+     * @return \NERD\schema\Document|boolean    Document, if successful, false otherwise.
+     */
     public function getDocument($idDocument) {
         if (!is_numeric($idDocument)) {
             return false;
